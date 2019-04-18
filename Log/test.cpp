@@ -2,7 +2,7 @@
 
 Test::Test()
 {
-    LogCore& instance = LogCore::getInstance();
+    LogCore& log = LogCore::getInstance();
 
-    instance.add("Test");
+    //log.add("Test");
 }

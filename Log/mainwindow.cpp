@@ -6,9 +6,21 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    LogCore& instance = LogCore::getInstance();
 
-    instance.add("Main Windows");
+    LogCore& log = LogCore::getInstance();
+    //LogMsg logm = LogMsg();
+
+    //log.add("Main Windows");
+    //log << "Main Windows";
+    /*logm << "Str1" << " Str2";
+    log << "Main Windows" << "12 s";
+    logm << " Str3";
+    logm.push() << "F";
+    logm.push();*/
+
+    //LogMsg() << "str 1" << " str 2";
+    cLog() << "str 1" << " str 2";
+    cLog() << "str 3" << " str 4";
 
     Test t;
 
