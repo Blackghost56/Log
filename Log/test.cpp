@@ -2,7 +2,8 @@
 
 Test::Test()
 {
-    LogCore& log = LogCore::getInstance();
+    //LogCore& log = LogCore::getInstance();
 
     //log.add("Test");
+    //LogBindQObject("d");
 }

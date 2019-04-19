@@ -14,59 +14,67 @@ public:
 
     struct LogData
     {
+        LogData () : category("Default"), ptr(nullptr) {}
         QString msg;
         QString context;
         LogGroup group;
+        QString category;
+        const QObject *ptr;
     };
 
 private:
     //LogData data;
+    QMultiMap<QString, const QObject *> categories;
+    QMap<const QObject *, QString> catptr;
+
+    bool ObjectIsBinded(const QObject *ptr, QString &category);
 
     LogCore();
     LogCore(const LogCore&) = delete;
     LogCore& operator = (LogCore&) = delete;
-
+    //~LogCore();
 public:
     static LogCore &getInstance();
-    //void operator << (const QString &str){ add(str); }
 
-    LogCore& operator << (const QString &str){
-        add(str);
-        return *this;
-    }
-
-    void add(const QString &str);
+    //void add(const QString &str);
     void addData(const LogData &data);
+
+    //void addCategory(const QString &category);
+    void bindQObjectWithCategory(const QString &category, const QObject *ptr);
 
 };
 
 
+/*#define LogAddCategory(category) \
+                LogCore::getInstance().addCategory(category);*/
+#define LogBindQObject(category) \
+                LogCore::getInstance().bindQObjectWithCategory(category, this);
 
 
 #define FILE static_cast<const char *>(__FILE__)
 #define LINE __LINE__
 #define FUNC static_cast<const char *>(Q_FUNC_INFO)
+
 #define LogDebug LogMsg(FILE, LINE, FUNC).Debug
 #define LogInfo LogMsg(FILE, LINE, FUNC).Info
 
+#define LogDebugQOC LogMsg(FILE, LINE, FUNC, this).Debug
+#define LogInfoQOC LogMsg(FILE, LINE, FUNC, this).Info
+
 class LogMsg
 {
-private:
-    //QString msg;
-    //QString context;
+protected:
     QTextStream stream;
     LogCore::LogData data;
 
 public:
-    LogMsg(const char *file, int line, const char *function);
+    LogMsg(const char *file, int line, const char *function, const QObject *ptr = nullptr);
     ~LogMsg();
     LogMsg &Debug();
+    LogMsg &Debug(const QString &category);
     LogMsg &Info();
+    LogMsg &Info(const QString &category);
 
-    /*LogMsg& operator << (const QString &str){
-        msg.append(str);
-        return *this;
-    }*/
 
     LogMsg &operator << (const QString &str) { stream << str; return *this; }
     LogMsg &operator << (const int &t) { stream << t; return *this; }
@@ -113,8 +121,6 @@ public:
     */
 
 };
-
-
 
 
 #endif // LOGCORE_H

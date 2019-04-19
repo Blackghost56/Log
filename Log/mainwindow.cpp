@@ -19,13 +19,26 @@ MainWindow::MainWindow(QWidget *parent) :
     logm.push();*/
 
     //LogMsg() << "str 1" << " str 2";
+
+    //LogAddCategory("s");
+    //LogAddCategory("ss");
+
+    LogBindQObject("d");
+
     LogDebug() << "str 1" << " str 2 " << 5;
     LogInfo() << "str 3" << " str 4";
+    LogInfo("Cat 1") << 546 << "   striiiinnng";
+
+    LogDebugQOC() << "QOC test 1";
+    LogDebugQOC("d") << "QOC test 2";
 
 
-    Test t;
+    TestQObject TestQ;
+    //qDebug() << this;
 
-    Test tt;
+    //Test t;
+
+    //Test tt;
 
 }
 

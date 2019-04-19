@@ -29,13 +29,15 @@ SOURCES += \
         mainwindow.cpp \
     logcore.cpp \
     test.cpp \
-    logwidget.cpp
+    logwidget.cpp \
+    testqobject.cpp
 
 HEADERS += \
         mainwindow.h \
     logcore.h \
     test.h \
-    logwidget.h
+    logwidget.h \
+    testqobject.h
 
 FORMS += \
         mainwindow.ui \
