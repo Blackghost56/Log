@@ -24,33 +24,46 @@ void LogCore::add(const QString &str)
 
 }
 
+void LogCore::addData(const LogCore::LogData &data)
+{
+    qDebug() << "Group: "   << LogGroupString.value(data.group);
+    qDebug() << "Context: " << data.context;
+    qDebug() << "Msg: "     << data.msg;
+}
+
 LogMsg::LogMsg(const char *file, int line, const char *function)
 {
-    stream.setString(&msg, QIODevice::ReadWrite);
+    stream.setString(&data.msg, QIODevice::ReadWrite);
 
+    data.context = QString("File: %1  Line: %2  Function: %3").arg(file).arg(line).arg(function);
     //context.push_back(QString(file + QString::number(line) + function));
-    context.push_back(QString("File: %1  Line: %2  Function: %3").arg(file).arg(line).arg(function));
+    //context.push_back(QString("File: %1  Line: %2  Function: %3").arg(file).arg(line).arg(function));
 }
 
 LogMsg::~LogMsg()
 {
     LogCore& log = LogCore::getInstance();
+    log.addData(data);
     //log.add(msg);
-    log.add(stream.readAll());
+    //log.add(stream.readAll());
+    //log.data.msg = stream.readAll();
+    //data.msg = stream.readAll();
 }
 
 LogMsg &LogMsg::Debug()
 {
-    context.push_back("  Debug: ");
-    stream << context;
+    //context.push_back("  Debug: ");
+    //stream << context;
+    data.group = LogCore::LogGroup::Debug;
 
     return *this;
 }
 
 LogMsg &LogMsg::Info()
 {
-    context.push_back("  Info: ");
-    stream << context;
+    //context.push_back("  Info: ");
+    //stream << context;
+    data.group = LogCore::LogGroup::Info;
 
     return *this;
 }

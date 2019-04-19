@@ -8,14 +8,26 @@
 
 class LogCore
 {
+public:
+    enum LogGroup : int {Debug, Info};
+    QMap<int, QString> LogGroupString = {{Debug, "Debug"}, {Info, "Info"}};
+
+    struct LogData
+    {
+        QString msg;
+        QString context;
+        LogGroup group;
+    };
+
 private:
+    //LogData data;
+
     LogCore();
     LogCore(const LogCore&) = delete;
     LogCore& operator = (LogCore&) = delete;
 
 public:
     static LogCore &getInstance();
-
     //void operator << (const QString &str){ add(str); }
 
     LogCore& operator << (const QString &str){
@@ -24,15 +36,12 @@ public:
     }
 
     void add(const QString &str);
-
-
-};
-
-
-struct Context
-{
+    void addData(const LogData &data);
 
 };
+
+
+
 
 #define FILE static_cast<const char *>(__FILE__)
 #define LINE __LINE__
@@ -43,9 +52,11 @@ struct Context
 class LogMsg
 {
 private:
-    QString msg;
-    QString context;
+    //QString msg;
+    //QString context;
     QTextStream stream;
+    LogCore::LogData data;
+
 public:
     LogMsg(const char *file, int line, const char *function);
     ~LogMsg();
