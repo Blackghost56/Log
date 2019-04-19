@@ -30,7 +30,7 @@ MainWindow::MainWindow(QWidget *parent) :
     LogInfo("Cat 1") << 546 << "   striiiinnng";
 
     LogDebugQOC() << "QOC test 1";
-    LogDebugQOC("d") << "QOC test 2";
+    LogDebugQOC("s") << "QOC test 2";
 
 
     TestQObject TestQ;

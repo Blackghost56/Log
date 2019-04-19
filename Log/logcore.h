@@ -24,10 +24,11 @@ public:
 
 private:
     //LogData data;
-    QMultiMap<QString, const QObject *> categories;
+    //QMultiMap<QString, const QObject *> categories;
+    QVector<QString> categories;
     QMap<const QObject *, QString> catptr;
 
-    bool ObjectIsBinded(const QObject *ptr, QString &category);
+    bool checkObjectIsBinded(const QObject *ptr, QString &category);
 
     LogCore();
     LogCore(const LogCore&) = delete;

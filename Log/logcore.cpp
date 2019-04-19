@@ -35,25 +35,26 @@ void LogCore::addData(const LogCore::LogData &data)
     //qDebug() << "";
 
     LogData buf;
-    QString buf_cat;
 
     if ((data.category != "Default") && (!data.category.isEmpty()))
     {
+        if (!categories.contains(data.category))
+            categories.push_back(data.category);
         buf.category = data.category;
-    } else if (ObjectIsBinded(buf.ptr, buf_cat)) {
-        buf.category = buf_cat;
+    } else {
+        if (!checkObjectIsBinded(data.ptr, buf.category) && (data.category != "Default"))
+            buf.category = "Default";
     }
 
-    //qDebug() << "Group: "       << LogGroupString.value(data.group);
     qDebug() << "Category: "    << buf.category;
-    //qDebug() << "Context: "     << data.context;
-    //qDebug() << "Ptr: "         << data.ptr <<  "Ptr&: "  << &data.ptr << "Ptr& + 1: "  << &data.ptr + 1;
-    //qDebug() << "Msg: "         << data.msg;
     qDebug() << "";
 }
 
-bool LogCore::ObjectIsBinded(const QObject *ptr, QString &category)
+bool LogCore::checkObjectIsBinded(const QObject *ptr, QString &category)
 {
+    if (ptr == nullptr)
+        return false;
+
     bool buf = false;
 
     if (catptr.contains(ptr))
@@ -72,9 +73,10 @@ bool LogCore::ObjectIsBinded(const QObject *ptr, QString &category)
 
 void LogCore::bindQObjectWithCategory(const QString &category, const QObject *ptr)
 {
-    qDebug() << "bindQObjectWithCategory: " << category << "  ptr: " << ptr;
+    //qDebug() << "bindQObjectWithCategory: " << category << "  ptr: " << ptr;
 
-    categories.insert(category, ptr);
+    //categories.insert(category, ptr);
+    categories.push_back(category);
     catptr.insert(ptr, category);
     /*QMap<QString, const QObject *>::const_iterator i = categories.find(category);
     if (i == categories.end())                              // Availability item check
