@@ -1,9 +1,18 @@
 #include "logcore.h"
 
 
+//LogCore::LogCore(QObject *pobj) : QObject (pobj)
 LogCore::LogCore()
 {
+   /*QThread *thread= new QThread;
+   LogHandler *my = new LogHandler("B");
 
+   my->moveToThread(thread);
+
+   connect(my, SIGNAL(send(int)), this, SLOT(update(int)));
+   connect(thread, SIGNAL(started()), my, SLOT(doWork()));
+
+   thread->start();*/
 }
 
 LogCore &LogCore::getInstance()
@@ -27,27 +36,20 @@ LogCore &LogCore::getInstance()
 
 void LogCore::addData(const LogCore::LogData &data)
 {
-    qDebug() << "Group: "       << LogGroupString.value(data.group);
-    qDebug() << "Category: "    << data.category;
-    qDebug() << "Context: "     << data.context;
-    qDebug() << "Ptr: "         << data.ptr <<  "Ptr&: "  << &data.ptr << "Ptr& + 1: "  << &data.ptr + 1;
-    qDebug() << "Msg: "         << data.msg;
-    //qDebug() << "";
+    mutex.lock();
+    LogData buf = data;
 
-    LogData buf;
-
-    if ((data.category != "Default") && (!data.category.isEmpty()))
+    if ((buf.category != "Default") && (!buf.category.isEmpty()))
     {
-        if (!categories.contains(data.category))
-            categories.push_back(data.category);
-        buf.category = data.category;
+        if (!categories.contains(buf.category))
+            categories.push_back(buf.category);
+        buf.category = buf.category;
     } else {
-        if (!checkObjectIsBinded(data.ptr, buf.category) && (data.category != "Default"))
+        if (!checkObjectIsBinded(buf.ptr, buf.category) && (buf.category != "Default"))
             buf.category = "Default";
     }
-
-    qDebug() << "Category: "    << buf.category;
-    qDebug() << "";
+    //qDebugOut(buf);
+    mutex.unlock();
 }
 
 bool LogCore::checkObjectIsBinded(const QObject *ptr, QString &category)
@@ -64,6 +66,16 @@ bool LogCore::checkObjectIsBinded(const QObject *ptr, QString &category)
     }
 
     return buf;
+}
+
+void LogCore::qDebugOut(const LogCore::LogData &data)
+{
+    qDebug() << "Group: "       << LogGroupString.value(data.group);
+    qDebug() << "Category: "    << data.category;
+    qDebug() << "Context: "     << data.context;
+    qDebug() << "Ptr: "         << data.ptr <<  "Ptr&: "  << &data.ptr << "Ptr& + 1: "  << &data.ptr + 1;
+    qDebug() << "Msg: "         << data.msg;
+    qDebug() << "";
 }
 
 /*void LogCore::addCategory(const QString &category)

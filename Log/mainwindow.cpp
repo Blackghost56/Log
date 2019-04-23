@@ -10,13 +10,6 @@ MainWindow::MainWindow(QWidget *parent) :
     //LogCore& log = LogCore::getInstance();
     //LogMsg logm = LogMsg();
 
-    //log.add("Main Windows");
-    //log << "Main Windows";
-    /*logm << "Str1" << " Str2";
-    log << "Main Windows" << "12 s";
-    logm << " Str3";
-    logm.push() << "F";
-    logm.push();*/
 
     //LogMsg() << "str 1" << " str 2";
 
@@ -33,16 +26,18 @@ MainWindow::MainWindow(QWidget *parent) :
     LogDebugQOC("s") << "QOC test 2";
 
 
-    TestQObject TestQ;
-    //qDebug() << this;
 
-    //Test t;
 
-    //Test tt;
 
+    th1 = new TestThread("1", this);
+    th2 = new TestThread("2", this);
+
+    th1->start();
+    th2->start();
 }
 
 MainWindow::~MainWindow()
 {
+    //delete pthread;
     delete ui;
 }

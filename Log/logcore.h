@@ -5,9 +5,13 @@
 #include <QDebug>
 #include <QTextStream>
 #include <QIODevice>
+#include <QMutex>
+#include <QThread>
 
+//class LogCore : public QObject
 class LogCore
 {
+//    Q_OBJECT
 public:
     enum LogGroup : int {Debug, Info};
     QMap<int, QString> LogGroupString = {{Debug, "Debug"}, {Info, "Info"}};
@@ -23,13 +27,14 @@ public:
     };
 
 private:
-    //LogData data;
-    //QMultiMap<QString, const QObject *> categories;
+    QMutex mutex;
     QVector<QString> categories;
     QMap<const QObject *, QString> catptr;
 
     bool checkObjectIsBinded(const QObject *ptr, QString &category);
+    void qDebugOut(const LogData &data);
 
+    //LogCore(QObject *pobj = nullptr);
     LogCore();
     LogCore(const LogCore&) = delete;
     LogCore& operator = (LogCore&) = delete;
@@ -43,6 +48,27 @@ public:
     //void addCategory(const QString &category);
     void bindQObjectWithCategory(const QString &category, const QObject *ptr);
 
+
+//private slots:
+    //void update(int a){ qDebug() << "a: " << a ;}
+};
+
+class LogHandler : public QObject
+{
+    Q_OBJECT
+private:
+    QString name;
+public:
+    LogHandler(QString s) : name(s){}
+public slots:
+    void doWork(){
+        for(int i = 0; i <= 100; i++)
+        {
+            emit send(i);
+        }
+        }
+signals:
+    void send(int);
 };
 
 

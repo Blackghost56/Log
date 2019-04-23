@@ -2,7 +2,7 @@
 
 TestQObject::TestQObject(QObject *parent) : QObject(parent)
 {
-    LogBindQObject("d");
+    LogBindQObject("d")
 
     LogInfoQOC("Category test Qobject") << "Test QObject with category";
 

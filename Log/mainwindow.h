@@ -5,6 +5,8 @@
 #include "logcore.h"
 #include "test.h"
 #include "testqobject.h"
+#include <QThread>
+#include "testthread.h"
 
 namespace Ui {
 class MainWindow;
@@ -20,6 +22,12 @@ public:
 
 private:
     Ui::MainWindow *ui;
+
+    TestThread *th1;
+    TestThread *th2;
+
 };
+
+
 
 #endif // MAINWINDOW_H
