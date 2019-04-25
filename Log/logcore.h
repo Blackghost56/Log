@@ -7,6 +7,8 @@
 #include <QIODevice>
 #include <QMutex>
 #include <QThread>
+#include <QFile>
+#include <QTime>
 
 
 class LogHandler;
@@ -51,14 +53,17 @@ signals:
     void send(LogCore::LogData &);
 };
 
+
+
 class LogHandler : public QObject
 {
     Q_OBJECT
 private:
-    QString name;
+    QFile           logFile;
+    QTextStream     writeStream;
 public:
-    LogHandler(QString s) : name(s){ qRegisterMetaType<LogCore::LogData>("LogCore::LogData&");}
-    ~LogHandler() {qDebug() << "LogHandler destructor";}
+    LogHandler();
+    ~LogHandler();
 public slots:
     void doWork(LogCore::LogData &data){
                 //qDebug() << "Group: "       << LogGroupString.value(data.group);
@@ -68,11 +73,6 @@ public slots:
                 qDebug() << "Msg: "         << data.msg;
                 qDebug() << "";
             }
-    /*void doWork(){
-        qDebug() << "Worker " << name;
-        }*/
-signals:
-    //void send(int);
 };
 
 

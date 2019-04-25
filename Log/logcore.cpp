@@ -4,7 +4,7 @@
 LogCore::LogCore(QObject *parent) : QObject(parent)
 {
    workerThread = new QThread;
-   worker = new LogHandler("B");
+   worker = new LogHandler();
 
    worker->moveToThread(workerThread);
 
@@ -79,6 +79,29 @@ void LogCore::bindQObjectWithCategory(const QString &category, const QObject *pt
     catptr.insert(ptr, category);
 }
 
+LogHandler::LogHandler()
+{
+    qRegisterMetaType<LogCore::LogData>("LogCore::LogData &");
+
+    logFile.setFileName("Log_"  + QTime::currentTime().toString() + ".txt");
+    if (!logFile.open(QIODevice::WriteOnly))
+    {
+        qDebug() << "Ошибка при открытии файла";
+        return;
+    }
+    writeStream.setDevice(&logFile);
+
+    writeStream  << "Test";
+
+    writeStream.flush();
+}
+
+LogHandler::~LogHandler()
+{
+    qDebug() << "LogHandler destructor";
+    logFile.close();
+}
+
 LogMsg::LogMsg(const char *file, int line, const char *function, const QObject *ptr)
 {
     stream.setString(&data.msg, QIODevice::ReadWrite);
@@ -122,3 +145,5 @@ LogMsg &LogMsg::Info(const QString &category)
 
     return *this;
 }
+
+
