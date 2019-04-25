@@ -8,10 +8,12 @@
 #include <QMutex>
 #include <QThread>
 
-//class LogCore : public QObject
-class LogCore
+
+class LogHandler;
+
+class LogCore : public QObject
 {
-//    Q_OBJECT
+    Q_OBJECT
 public:
     enum LogGroup : int {Debug, Info};
     QMap<int, QString> LogGroupString = {{Debug, "Debug"}, {Info, "Info"}};
@@ -30,27 +32,23 @@ private:
     QMutex mutex;
     QVector<QString> categories;
     QMap<const QObject *, QString> catptr;
+    QThread *workerThread;
+    LogHandler *worker;
 
     bool checkObjectIsBinded(const QObject *ptr, QString &category);
     void qDebugOut(const LogData &data);
 
-    //LogCore(QObject *pobj = nullptr);
-    LogCore();
+    LogCore(QObject *parent = nullptr);
     LogCore(const LogCore&) = delete;
     LogCore& operator = (LogCore&) = delete;
-    //~LogCore();
+    ~LogCore();
 public:
     static LogCore &getInstance();
-
-    //void add(const QString &str);
     void addData(const LogData &data);
-
-    //void addCategory(const QString &category);
     void bindQObjectWithCategory(const QString &category, const QObject *ptr);
 
-
-//private slots:
-    //void update(int a){ qDebug() << "a: " << a ;}
+signals:
+    void send(LogCore::LogData &);
 };
 
 class LogHandler : public QObject
@@ -60,20 +58,19 @@ private:
     QString name;
 public:
     LogHandler(QString s) : name(s){}
+    ~LogHandler() {qDebug() << "LogHandler destructor";}
 public slots:
-    void doWork(){
-        for(int i = 0; i <= 100; i++)
-        {
-            emit send(i);
-        }
-        }
+    void doWork(LogCore::LogData &){
+            qDebug() << "Worker " << name;
+            }
+    /*void doWork(){
+        qDebug() << "Worker " << name;
+        }*/
 signals:
-    void send(int);
+    //void send(int);
 };
 
 
-/*#define LogAddCategory(category) \
-                LogCore::getInstance().addCategory(category);*/
 #define LogBindQObject(category) \
                 LogCore::getInstance().bindQObjectWithCategory(category, this);
 
