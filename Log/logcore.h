@@ -57,11 +57,16 @@ class LogHandler : public QObject
 private:
     QString name;
 public:
-    LogHandler(QString s) : name(s){}
+    LogHandler(QString s) : name(s){ qRegisterMetaType<LogCore::LogData>("LogCore::LogData&");}
     ~LogHandler() {qDebug() << "LogHandler destructor";}
 public slots:
-    void doWork(LogCore::LogData &){
-            qDebug() << "Worker " << name;
+    void doWork(LogCore::LogData &data){
+                //qDebug() << "Group: "       << LogGroupString.value(data.group);
+                qDebug() << "Category: "    << data.category;
+                qDebug() << "Context: "     << data.context;
+                qDebug() << "Ptr: "         << data.ptr <<  "Ptr&: "  << &data.ptr << "Ptr& + 1: "  << &data.ptr + 1;
+                qDebug() << "Msg: "         << data.msg;
+                qDebug() << "";
             }
     /*void doWork(){
         qDebug() << "Worker " << name;

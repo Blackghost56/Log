@@ -11,7 +11,7 @@ public:
     TestThread(QString name, QObject *obj = nullptr);
     void run() override{
         int i = 0;
-        while (i < 500) {
+        while (i < 1000) {
             //LogInfo() << "Test Thread";
             LogInfoQOC() << i;
             i++;

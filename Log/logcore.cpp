@@ -3,15 +3,14 @@
 
 LogCore::LogCore(QObject *parent) : QObject(parent)
 {
-   //qRegisterMetaType<LogData>();
    workerThread = new QThread;
    worker = new LogHandler("B");
 
    worker->moveToThread(workerThread);
 
    //connect(workerThread, SIGNAL(started()), worker, SLOT(doWork()));
-   connect(this, &LogCore::send, worker, &LogHandler::doWork);
-   //connect(this, SIGNAL(send(LogCore::LogData &)), worker, SLOT(doWork(LogCore::LogData &)));
+   //connect(this, &LogCore::send, worker, &LogHandler::doWork);
+   connect(this, SIGNAL(send(LogCore::LogData &)), worker, SLOT(doWork(LogCore::LogData &)));
 
    workerThread->start();
 }
