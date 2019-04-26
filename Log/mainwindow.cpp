@@ -7,6 +7,12 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+
+    //connect(LogCoreInstance.getLogHandlerPtr(), &LogHandler::sendDataToUi, ui->widget, &LogWidget::addData);
+    //connect(LogCoreInstance.getLogHandlerPtr(), SIGNAL(sendDataToUi(const LogCore::LogData &)), ui->widget, SLOT(addData(const LogCore::LogData &)));
+    //connect(LogCoreInstance.getLogHandlerPtr(), &LogHandler::sendStringToUi, ui->widget, &LogWidget::addString);
+    LogBindUI(ui->widget);
+
     // thread test
     th1 = new TestThread("Thread 1", this);
     th2 = new TestThread("Thread 2", this);

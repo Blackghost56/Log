@@ -60,7 +60,7 @@ bool LogCore::checkObjectIsBinded(const QObject *ptr, QString &category)
     return buf;
 }
 
-void LogCore::qDebugOut(const LogCore::LogData &data)
+/*void LogCore::qDebugOut(const LogCore::LogData &data)
 {
     qDebug() << "Group: "       << LogCoreInstance.LogGroupToString(data.group);
     qDebug() << "Category: "    << data.category;
@@ -68,7 +68,7 @@ void LogCore::qDebugOut(const LogCore::LogData &data)
     qDebug() << "Ptr: "         << data.ptr <<  "Ptr&: "  << &data.ptr << "Ptr& + 1: "  << &data.ptr + 1;
     qDebug() << "Msg: "         << data.msg;
     qDebug() << "";
-}
+}*/
 
 void LogCore::bindQObjectWithCategory(const QString &category, const QObject *ptr)
 {
@@ -91,29 +91,33 @@ QVector<QString> LogCore::getCategories()
     return categories;
 }
 
+LogHandler *LogCore::getLogHandlerPtr()
+{
+    return worker;
+}
+
 LogHandler::LogHandler()
 {
     qRegisterMetaType<LogCore::LogData>("LogCore::LogData &");
 
-    logFile.setFileName("Log_"  + QDateTime::currentDateTimeUtc().toString("dd_MM_yyyy__hh_mm_ss_UTC") + ".txt");
+    QString date = QDateTime::currentDateTimeUtc().toString("dd_MM_yyyy__hh_mm_ss_UTC");
+    QString filename = "Log_"  + date + ".txt";
+    logFile.setFileName(filename);
     //logFile.setFileName("Log_:wasd:sda:\|.txt");
     if (!logFile.open(QIODevice::WriteOnly))
     {
         // Dummy: write 'error create log file' to ui log
-        emit sendStringToUi("Error create log file");
+        emit sendStringToUi("Error open log file");
         return;
     }
+    emit sendStringToUi("Log file is open. File name: " + filename + "      File directory : " + QDir::currentPath());
+    //qDebug() << "Log file is open. File name: " + filename + "     File directory : " + QDir::currentPath();
     writeStream.setDevice(&logFile);
-
-
-    //qDebug() << "LogHandler";
-    //writeStream  << "Test 3";
-    //writeStream.flush();
 }
 
 LogHandler::~LogHandler()
 {
-    qDebug() << "LogHandler destructor";
+    //qDebug() << "LogHandler destructor";
     logFile.close();
 }
 

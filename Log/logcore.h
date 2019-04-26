@@ -2,13 +2,16 @@
 #define LOGCORE_H
 
 #include <QObject>
-#include <QDebug>
+#include <QDebug>       //!!!
+#include <QVector>
 #include <QTextStream>
 #include <QIODevice>
 #include <QMutex>
 #include <QThread>
 #include <QFile>
 #include <QDateTime>
+#include <QDir>
+
 
 
 class LogHandler;
@@ -41,7 +44,7 @@ private:
     LogHandler *worker;
 
     bool checkObjectIsBinded(const QObject *ptr, QString &category);
-    void qDebugOut(const LogData &data);
+    //void qDebugOut(const LogData &data);
 
     LogCore(QObject *parent = nullptr);
     LogCore(const LogCore&) = delete;
@@ -53,6 +56,7 @@ public:
     void bindQObjectWithCategory(const QString &category, const QObject *ptr);
     QString LogGroupToString(const LogGroup &group);
     QVector<QString> getCategories();
+    LogHandler *getLogHandlerPtr();
 
 signals:
     void sendToWorker(LogCore::LogData &);
@@ -78,11 +82,15 @@ public slots:
     void doWork(LogCore::LogData &data);
 
 signals:
-    void sendStringToUi(const QString &str);
+    //void sendStringToUi(const QString &str);
+    void sendStringToUi(QString str);
     void sendDataToUi(const LogCore::LogData &data);
 };
 
 #define LogCoreInstance LogCore::getInstance()
+#define LogBindUI(UIPtr) \
+                connect(LogCoreInstance.getLogHandlerPtr(), &LogHandler::sendDataToUi, UIPtr, &LogWidget::addData); \
+                connect(LogCoreInstance.getLogHandlerPtr(), &LogHandler::sendStringToUi, UIPtr, &LogWidget::addString);
 #define LogBindQObject(category) \
                 LogCore::getInstance().bindQObjectWithCategory(category, this);
 

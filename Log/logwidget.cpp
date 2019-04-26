@@ -6,6 +6,8 @@ LogWidget::LogWidget(QWidget *parent) :
     ui(new Ui::LogWidget)
 {
     ui->setupUi(this);
+    qRegisterMetaType<LogCore::LogData>("const LogCore::LogData &");
+
 }
 
 LogWidget::~LogWidget()
@@ -16,4 +18,15 @@ LogWidget::~LogWidget()
 void LogWidget::add(const QString &str)
 {
     ui->plainTextEdit->appendPlainText(str);
+}
+
+void LogWidget::addData(const LogCore::LogData &data)
+{
+    add(data.msg);
+}
+
+void LogWidget::addString(QString str)
+{
+    qDebug() << "addString";
+    add(str);
 }
