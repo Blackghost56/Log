@@ -5,13 +5,8 @@ LogCore::LogCore(QObject *parent) : QObject(parent)
 {
    workerThread = new QThread;
    worker = new LogHandler();
-
    worker->moveToThread(workerThread);
-
-   //connect(workerThread, SIGNAL(started()), worker, SLOT(doWork()));
-   //connect(this, &LogCore::send, worker, &LogHandler::doWork);
-   connect(this, SIGNAL(send(LogCore::LogData &)), worker, SLOT(doWork(LogCore::LogData &)));
-
+   connect(this, &LogCore::sendToWorker, worker, &LogHandler::doWork);
    workerThread->start();
 }
 
@@ -30,21 +25,23 @@ LogCore &LogCore::getInstance()
 
 void LogCore::addData(const LogCore::LogData &data)
 {
-    mutex.lock();
+    mutexAdd.lock();
     LogData buf = data;
 
     if ((buf.category != "Default") && (!buf.category.isEmpty()))
     {
-        if (!categories.contains(buf.category))
+        if (!categories.contains(buf.category)){
             categories.push_back(buf.category);
+            emit categoriesHasChanged(categories);
+        }
         buf.category = buf.category;
     } else {
         if (!checkObjectIsBinded(buf.ptr, buf.category) && (buf.category != "Default"))
             buf.category = "Default";
     }
     //qDebugOut(buf);
-    emit send(buf);
-    mutex.unlock();
+    emit sendToWorker(buf);
+    mutexAdd.unlock();
 }
 
 bool LogCore::checkObjectIsBinded(const QObject *ptr, QString &category)
@@ -65,7 +62,7 @@ bool LogCore::checkObjectIsBinded(const QObject *ptr, QString &category)
 
 void LogCore::qDebugOut(const LogCore::LogData &data)
 {
-    qDebug() << "Group: "       << LogGroupString.value(data.group);
+    qDebug() << "Group: "       << LogCoreInstance.LogGroupToString(data.group);
     qDebug() << "Category: "    << data.category;
     qDebug() << "Context: "     << data.context;
     qDebug() << "Ptr: "         << data.ptr <<  "Ptr&: "  << &data.ptr << "Ptr& + 1: "  << &data.ptr + 1;
@@ -77,6 +74,21 @@ void LogCore::bindQObjectWithCategory(const QString &category, const QObject *pt
 {
     categories.push_back(category);
     catptr.insert(ptr, category);
+    emit categoriesHasChanged(categories);
+}
+
+QString LogCore::LogGroupToString(const LogCore::LogGroup &group)
+{
+    QMutexLocker locker(&mutexLGTS);
+    QString buf = LogGroupString.value(group);
+    return buf;
+}
+
+QVector<QString> LogCore::getCategories()
+{
+    QMutexLocker locker(&mutexCat);
+
+    return categories;
 }
 
 LogHandler::LogHandler()
@@ -125,7 +137,7 @@ void LogHandler::writeToFile(LogCore::LogData &data)
         return;
     }
     writeStream << data.time.toString("hh:mm:ss.zz") << endl;
-    writeStream << data.group << endl;
+    writeStream << LogCoreInstance.LogGroupToString(data.group) << endl;
     writeStream << data.context << endl;
     writeStream << data.category << endl;
     writeStream << data.msg << endl << endl;

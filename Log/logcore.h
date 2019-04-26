@@ -32,7 +32,9 @@ public:
     };
 
 private:
-    QMutex mutex;
+    QMutex mutexAdd;
+    QMutex mutexLGTS;
+    QMutex mutexCat;
     QVector<QString> categories;
     QMap<const QObject *, QString> catptr;
     QThread *workerThread;
@@ -49,9 +51,12 @@ public:
     static LogCore &getInstance();
     void addData(const LogData &data);
     void bindQObjectWithCategory(const QString &category, const QObject *ptr);
+    QString LogGroupToString(const LogGroup &group);
+    QVector<QString> getCategories();
 
 signals:
-    void send(LogCore::LogData &);
+    void sendToWorker(LogCore::LogData &);
+    void categoriesHasChanged(const QVector<QString> &categories);
 };
 
 
@@ -77,7 +82,7 @@ signals:
     void sendDataToUi(const LogCore::LogData &data);
 };
 
-
+#define LogCoreInstance LogCore::getInstance()
 #define LogBindQObject(category) \
                 LogCore::getInstance().bindQObjectWithCategory(category, this);
 

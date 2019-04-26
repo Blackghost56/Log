@@ -7,38 +7,30 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    //LogCore& log = LogCore::getInstance();
-    //LogMsg logm = LogMsg();
+    // thread test
+    th1 = new TestThread("Thread 1", this);
+    th2 = new TestThread("Thread 2", this);
 
-
-    //LogMsg() << "str 1" << " str 2";
-
-    //LogAddCategory("s");
-    //LogAddCategory("ss");
-
-    /*LogBindQObject("d");
-
-    LogDebug() << "str 1" << " str 2 " << 5;
-    LogInfo() << "str 3" << " str 4";
-    LogInfo("Cat 1") << 546 << "   striiiinnng";
-
-    LogDebugQOC() << "QOC test 1";
-    LogDebugQOC("s") << "QOC test 2";*/
+    //th1->start();
+    //th2->start();
+    // -----------
 
     // unit test 1
-    LogBindQObject("LogBindQObject");
+    LogBindQObject("LogBindQObject mainwoindow");   // Created default name (category) for this class
 
-    LogDebug() << "LogDebug";
-    LogInfo() << "LogInfo";
-    LogWarning() << "LogWarning";
-    LogCritical() << "LogCritical";
-    LogFatal() << "LogFatal";
+    LogDebug() << "LogDebug";           // Group test
+    LogInfo() << "LogInfo";             //
+    LogWarning() << "LogWarning";       //
+    LogCritical() << "LogCritical";     //
+    LogFatal() << "LogFatal";           //
 
-    LogInfo() << "str 3" << " str 4";
-    LogInfo("Cat 1") << 546;
+    LogInfo() << "str 3" << " str 4";   // Merge test multiple arguments
 
-    LogDebugQOC() << "QOC test 1";
-    LogDebugQOC("s") << "QOC test 2";
+    LogInfo("Cat 1") << 546;            // Category Merge Test
+    LogInfo("Cat 1") << 345;            //
+
+    LogDebugQOC() << "QOC test 1";      // LogBindQObject macros test
+    LogDebugQOC("s") << "QOC test 2";   //
     // -----------
 
     // unit test 2
@@ -60,16 +52,9 @@ MainWindow::MainWindow(QWidget *parent) :
     LogInfo("double to QString")<< QString("%1").arg(double(-12222.2222222222222222111111), 0, 'g', 30);
     // -----------
 
-
-    th1 = new TestThread("Thread 1", this);
-    th2 = new TestThread("Thread 2", this);
-
-    //th1->start();
-    //th2->start();
 }
 
 MainWindow::~MainWindow()
 {
-    //delete pthread;
     delete ui;
 }
