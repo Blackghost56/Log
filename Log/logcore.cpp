@@ -84,9 +84,11 @@ LogHandler::LogHandler()
     qRegisterMetaType<LogCore::LogData>("LogCore::LogData &");
 
     logFile.setFileName("Log_"  + QDateTime::currentDateTimeUtc().toString("dd_MM_yyyy__hh_mm_ss_UTC") + ".txt");
+    //logFile.setFileName("Log_:wasd:sda:\|.txt");
     if (!logFile.open(QIODevice::WriteOnly))
     {
         // Dummy: write 'error create log file' to ui log
+        emit sendStringToUi("Error create log file");
         return;
     }
     writeStream.setDevice(&logFile);
@@ -113,11 +115,15 @@ void LogHandler::doWork(LogCore::LogData &data)
                 qDebug() << "Msg: "         << data.msg;
                 qDebug() << "";*/
     writeToFile(data);
+    emit sendDataToUi(data);
 }
 
 void LogHandler::writeToFile(LogCore::LogData &data)
 {
     //qDebug() << "WriteToFile";
+    if (writeStream.device() == nullptr){
+        return;
+    }
     writeStream << data.time.toString("hh:mm:ss.zz") << endl;
     writeStream << data.group << endl;
     writeStream << data.context << endl;
@@ -167,6 +173,51 @@ LogMsg &LogMsg::Info()
 LogMsg &LogMsg::Info(const QString &category)
 {
     data.group = LogCore::LogGroup::Info;
+    data.category = category;
+
+    return *this;
+}
+
+LogMsg &LogMsg::Warning()
+{
+    data.group = LogCore::LogGroup::Warning;
+
+    return *this;
+}
+
+LogMsg &LogMsg::Warning(const QString &category)
+{
+    data.group = LogCore::LogGroup::Warning;
+    data.category = category;
+
+    return *this;
+}
+
+LogMsg &LogMsg::Critical()
+{
+    data.group = LogCore::LogGroup::Critical;
+
+    return *this;
+}
+
+LogMsg &LogMsg::Critical(const QString &category)
+{
+    data.group = LogCore::LogGroup::Critical;
+    data.category = category;
+
+    return *this;
+}
+
+LogMsg &LogMsg::Fatal()
+{
+    data.group = LogCore::LogGroup::Fatal;
+
+    return *this;
+}
+
+LogMsg &LogMsg::Fatal(const QString &category)
+{
+    data.group = LogCore::LogGroup::Fatal;
     data.category = category;
 
     return *this;

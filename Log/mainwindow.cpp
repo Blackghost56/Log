@@ -25,7 +25,23 @@ MainWindow::MainWindow(QWidget *parent) :
     LogDebugQOC() << "QOC test 1";
     LogDebugQOC("s") << "QOC test 2";*/
 
-    // unit test
+    // unit test 1
+    LogBindQObject("LogBindQObject");
+
+    LogDebug() << "LogDebug";
+    LogInfo() << "LogInfo";
+    LogWarning() << "LogWarning";
+    LogCritical() << "LogCritical";
+    LogFatal() << "LogFatal";
+
+    LogInfo() << "str 3" << " str 4";
+    LogInfo("Cat 1") << 546;
+
+    LogDebugQOC() << "QOC test 1";
+    LogDebugQOC("s") << "QOC test 2";
+    // -----------
+
+    // unit test 2
     LogInfo("String")           << "str 1"          << " str 2";
     LogInfo("QChar")            << QChar('c');
     LogInfo("char")             << 'z';

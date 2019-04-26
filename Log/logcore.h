@@ -17,8 +17,8 @@ class LogCore : public QObject
 {
     Q_OBJECT
 public:
-    enum LogGroup : int {Debug, Info};
-    QMap<int, QString> LogGroupString = {{Debug, "Debug"}, {Info, "Info"}};
+    enum LogGroup : int {Debug, Info, Warning, Critical, Fatal};
+    QMap<int, QString> LogGroupString = {{Debug, "Debug"}, {Info, "Info"}, {Warning, "Warning"}, {Critical, "Critical"}, {Fatal, "Fatal"}};
 
     struct LogData
     {
@@ -73,7 +73,8 @@ public slots:
     void doWork(LogCore::LogData &data);
 
 signals:
-    void sendToUi();
+    void sendStringToUi(const QString &str);
+    void sendDataToUi(const LogCore::LogData &data);
 };
 
 
@@ -87,9 +88,15 @@ signals:
 
 #define LogDebug LogMsg(FILE, LINE, FUNC).Debug
 #define LogInfo LogMsg(FILE, LINE, FUNC).Info
+#define LogWarning LogMsg(FILE, LINE, FUNC).Warning
+#define LogCritical LogMsg(FILE, LINE, FUNC).Critical
+#define LogFatal LogMsg(FILE, LINE, FUNC).Fatal
 
 #define LogDebugQOC LogMsg(FILE, LINE, FUNC, this).Debug
 #define LogInfoQOC LogMsg(FILE, LINE, FUNC, this).Info
+#define LogWarningQOC LogMsg(FILE, LINE, FUNC, this).Warning
+#define LogCriticalQOC LogMsg(FILE, LINE, FUNC, this).Critical
+#define LogFatalQOC LogMsg(FILE, LINE, FUNC, this).Fatal
 
 class LogMsg
 {
@@ -104,6 +111,12 @@ public:
     LogMsg &Debug(const QString &category);
     LogMsg &Info();
     LogMsg &Info(const QString &category);
+    LogMsg &Warning();
+    LogMsg &Warning(const QString &category);
+    LogMsg &Critical();
+    LogMsg &Critical(const QString &category);
+    LogMsg &Fatal();
+    LogMsg &Fatal(const QString &category);
 
 
     LogMsg &space() { stream << ' '; return *this; }
@@ -122,7 +135,6 @@ public:
     LogMsg &operator << (const double &t) { stream << t; return space(); }
     //LogMsg &operator << (const bool &t) { if(t){stream << "true";} else {stream << "false";} return space(); }
     //LogMsg &operator << (const QByteArray &t) { stream << t; return space(); }
-
 };
 
 
