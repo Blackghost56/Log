@@ -83,17 +83,18 @@ LogHandler::LogHandler()
 {
     qRegisterMetaType<LogCore::LogData>("LogCore::LogData &");
 
-    logFile.setFileName("Log_"  + QTime::currentTime().toString() + ".txt");
+    logFile.setFileName("Log_"  + QDateTime::currentDateTimeUtc().toString("dd_MM_yyyy__hh_mm_ss_UTC") + ".txt");
     if (!logFile.open(QIODevice::WriteOnly))
     {
-        qDebug() << "Ошибка при открытии файла";
+        // Dummy: write 'error create log file' to ui log
         return;
     }
     writeStream.setDevice(&logFile);
 
-    writeStream  << "Test";
 
-    writeStream.flush();
+    //qDebug() << "LogHandler";
+    //writeStream  << "Test 3";
+    //writeStream.flush();
 }
 
 LogHandler::~LogHandler()
@@ -102,10 +103,35 @@ LogHandler::~LogHandler()
     logFile.close();
 }
 
+void LogHandler::doWork(LogCore::LogData &data)
+{
+    //qDebug() << "doWork";
+    //qDebug() << "Group: "       << LogGroupString.value(data.group);
+    /*qDebug() << "Category: "    << data.category;
+                qDebug() << "Context: "     << data.context;
+                qDebug() << "Ptr: "         << data.ptr <<  "Ptr&: "  << &data.ptr << "Ptr& + 1: "  << &data.ptr + 1;
+                qDebug() << "Msg: "         << data.msg;
+                qDebug() << "";*/
+    writeToFile(data);
+}
+
+void LogHandler::writeToFile(LogCore::LogData &data)
+{
+    //qDebug() << "WriteToFile";
+    writeStream << data.time.toString("hh:mm:ss.zz") << endl;
+    writeStream << data.group << endl;
+    writeStream << data.context << endl;
+    writeStream << data.category << endl;
+    writeStream << data.msg << endl << endl;
+
+    writeStream.flush();
+}
+
 LogMsg::LogMsg(const char *file, int line, const char *function, const QObject *ptr)
 {
     stream.setString(&data.msg, QIODevice::ReadWrite);
 
+    data.time = QTime::currentTime();
     data.context = QString("File: %1  Line: %2  Function: %3").arg(file).arg(line).arg(function);
     data.ptr = ptr;
 }
