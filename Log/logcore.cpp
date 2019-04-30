@@ -4,7 +4,7 @@
 LogCore::LogCore(QObject *parent) : QObject(parent)
 {
    workerThread = new QThread;
-   worker = new LogHandler();
+   worker = new LogHandler(this);
    worker->moveToThread(workerThread);
    connect(this, &LogCore::sendToWorker, worker, &LogHandler::doWork);
    workerThread->start();
@@ -96,9 +96,18 @@ LogHandler *LogCore::getLogHandlerPtr()
     return worker;
 }
 
-LogHandler::LogHandler()
+void LogCore::test(const QString &str)
+{
+    qDebug() << "test: " << str;
+    emit sendStringToUi(str);
+}
+
+LogHandler::LogHandler(QObject *parent)
 {
     qRegisterMetaType<LogCore::LogData>("LogCore::LogData &");
+
+    connect(this, &LogHandler::serviceInformation, static_cast<LogCore *>(parent), &LogCore::sendStringToUi);
+    connect(this, &LogHandler::serviceInformation, static_cast<LogCore *>(parent), &LogCore::test);
 
     QString date = QDateTime::currentDateTimeUtc().toString("dd_MM_yyyy__hh_mm_ss_UTC");
     QString filename = "Log_"  + date + ".txt";
@@ -107,10 +116,10 @@ LogHandler::LogHandler()
     if (!logFile.open(QIODevice::WriteOnly))
     {
         // Dummy: write 'error create log file' to ui log
-        emit sendStringToUi("Error open log file");
+        emit serviceInformation("Error open log file");
         return;
     }
-    emit sendStringToUi("Log file is open. File name: " + filename + "      File directory : " + QDir::currentPath());
+    emit serviceInformation("Log file is open. File name: " + filename + "      File directory : " + QDir::currentPath());
     //qDebug() << "Log file is open. File name: " + filename + "     File directory : " + QDir::currentPath();
     writeStream.setDevice(&logFile);
 }

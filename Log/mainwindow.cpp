@@ -9,8 +9,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     //connect(LogCoreInstance.getLogHandlerPtr(), &LogHandler::sendDataToUi, ui->widget, &LogWidget::addData);
-    //connect(LogCoreInstance.getLogHandlerPtr(), SIGNAL(sendDataToUi(const LogCore::LogData &)), ui->widget, SLOT(addData(const LogCore::LogData &)));
-    //connect(LogCoreInstance.getLogHandlerPtr(), &LogHandler::sendStringToUi, ui->widget, &LogWidget::addString);
+    //connect(&LogCoreInstance, &LogCore::sendStringToUi, ui->widget, &LogWidget::addString);
+    //connect(&LogCoreInstance, &LogCore::categoriesHasChanged, ui->widget, &LogWidget::categoriesHasChanged);
     LogBindUI(ui->widget);
 
     // thread test

@@ -61,6 +61,10 @@ public:
 signals:
     void sendToWorker(LogCore::LogData &);
     void categoriesHasChanged(const QVector<QString> &categories);
+    void sendStringToUi(const QString &str);
+
+public slots:
+    void test(const QString &str);
 };
 
 
@@ -75,22 +79,22 @@ private:
     void writeToFile(LogCore::LogData &data);
 
 public:
-    LogHandler();
+    LogHandler(QObject *parent = nullptr);
     ~LogHandler();
 
 public slots:
     void doWork(LogCore::LogData &data);
 
 signals:
-    //void sendStringToUi(const QString &str);
-    void sendStringToUi(QString str);
+    void serviceInformation(const QString &str);
     void sendDataToUi(const LogCore::LogData &data);
 };
 
 #define LogCoreInstance LogCore::getInstance()
 #define LogBindUI(UIPtr) \
                 connect(LogCoreInstance.getLogHandlerPtr(), &LogHandler::sendDataToUi, UIPtr, &LogWidget::addData); \
-                connect(LogCoreInstance.getLogHandlerPtr(), &LogHandler::sendStringToUi, UIPtr, &LogWidget::addString);
+                connect(&LogCoreInstance, &LogCore::sendStringToUi, UIPtr, &LogWidget::addString);\
+                connect(&LogCoreInstance, &LogCore::categoriesHasChanged, UIPtr, &LogWidget::categoriesHasChanged);
 #define LogBindQObject(category) \
                 LogCore::getInstance().bindQObjectWithCategory(category, this);
 

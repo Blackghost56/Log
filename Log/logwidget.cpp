@@ -25,8 +25,13 @@ void LogWidget::addData(const LogCore::LogData &data)
     add(data.msg);
 }
 
-void LogWidget::addString(QString str)
+void LogWidget::addString(const QString &str)
 {
     qDebug() << "addString";
     add(str);
+}
+
+void LogWidget::categoriesHasChanged(const QVector<QString> &categories)
+{
+    qDebug() << categories;
 }

@@ -23,9 +23,8 @@ public:
 
 public slots:
     void addData(const LogCore::LogData &data);
-    //void addString(const QString &str);
-    void addString(QString str);
-
+    void addString(const QString &str);
+    void categoriesHasChanged(const QVector<QString> &categories);
 };
 
 #endif // LOGWIDGET_H
