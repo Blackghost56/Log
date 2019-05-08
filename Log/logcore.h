@@ -34,14 +34,27 @@ public:
         const QObject *ptr;
     };
 
+    struct Filter {
+        bool timePrefixVisible       = true;
+        bool contextPrefixVisible    = false;
+        QMap<QString, bool> categoriesState;
+        bool categoriesPrefixVisible = true;
+        QMap<LogGroup, bool> groupState = {{Debug, true}, {Info, true}, {Warning, true}, {Critical, true}, {Fatal, true}};
+        bool groupPrefixVisible = false;
+    };
+
 private:
+    const bool  newCategoriesStateDefault = true;
+
     QMutex mutexAdd;
     QMutex mutexLGTS;
     QMutex mutexCat;
+    QMutex mutexFilter;
     QVector<QString> categories;
     QMap<const QObject *, QString> catptr;
     QThread *workerThread;
     LogHandler *worker;
+    Filter filterState;
 
     bool checkObjectIsBinded(const QObject *ptr, QString &category);
     //void qDebugOut(const LogData &data);
@@ -57,14 +70,17 @@ public:
     QString LogGroupToString(const LogGroup &group);
     QVector<QString> getCategories();
     LogHandler *getLogHandlerPtr();
+    Filter &getFilterState();
+    void setFilterState(const Filter &state);
+
 
 signals:
     void sendToWorker(LogCore::LogData &);
-    void categoriesHasChanged(const QVector<QString> &categories);
-    void sendStringToUi(const QString &str);
+    void categoriesHasChanged(const QVector<QString> &categories, const QMap<QString, bool> categoriesState);
+    //void sendStringToUi(const QString &str);
 
 public slots:
-    void test(const QString &str);
+
 };
 
 
@@ -73,13 +89,18 @@ class LogHandler : public QObject
 {
     Q_OBJECT
 private:
+    const QString time_format_1 = "hh:mm:ss.zz";
+    const QString time_format_2 = "hh:mm:ss.zzz";
+
     QFile           logFile;
     QTextStream     writeStream;
 
-    void writeToFile(LogCore::LogData &data);
+    void writeToFile(const LogCore::LogData &data);
+    void sendFilteredDataToUi(const LogCore::LogData &data);
 
 public:
-    LogHandler(QObject *parent = nullptr);
+    LogHandler();
+    //LogHandler(QObject *parent = nullptr);
     ~LogHandler();
 
 public slots:
@@ -87,14 +108,15 @@ public slots:
 
 signals:
     void serviceInformation(const QString &str);
-    void sendDataToUi(const LogCore::LogData &data);
+    //void sendDataToUi(const LogCore::LogData &data);
+    void sendDataToUi(const QString &data);
 };
 
 #define LogCoreInstance LogCore::getInstance()
 #define LogBindUI(UIPtr) \
-                connect(LogCoreInstance.getLogHandlerPtr(), &LogHandler::sendDataToUi, UIPtr, &LogWidget::addData); \
-                connect(&LogCoreInstance, &LogCore::sendStringToUi, UIPtr, &LogWidget::addString);\
-                connect(&LogCoreInstance, &LogCore::categoriesHasChanged, UIPtr, &LogWidget::categoriesHasChanged);
+                connect(&LogCoreInstance, &LogCore::categoriesHasChanged, UIPtr, &LogWidget::categoriesHasChanged); \
+                connect(LogCoreInstance.getLogHandlerPtr(), &LogHandler::sendDataToUi, UIPtr, &LogWidget::addString);
+                /*connect(&LogCoreInstance, &LogCore::sendStringToUi, UIPtr, &LogWidget::addString);*/
 #define LogBindQObject(category) \
                 LogCore::getInstance().bindQObjectWithCategory(category, this);
 

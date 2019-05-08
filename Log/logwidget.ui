@@ -13,16 +13,23 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <widget class="QPlainTextEdit" name="plainTextEdit">
-   <property name="geometry">
-    <rect>
-     <x>323</x>
-     <y>29</y>
-     <width>251</width>
-     <height>391</height>
-    </rect>
-   </property>
-  </widget>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <widget class="QSplitter" name="splitter">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <widget class="QWidget" name="verticalLayoutWidget">
+      <layout class="QVBoxLayout" name="Filter_Layout">
+       <property name="sizeConstraint">
+        <enum>QLayout::SetMaximumSize</enum>
+       </property>
+      </layout>
+     </widget>
+     <widget class="QPlainTextEdit" name="TextEdit"/>
+    </widget>
+   </item>
+  </layout>
  </widget>
  <resources/>
  <connections/>

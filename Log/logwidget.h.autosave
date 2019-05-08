@@ -29,6 +29,10 @@ public slots:
     //void addData(const LogCore::LogData &data);
     void addString(const QString &str);
     void categoriesHasChanged(const QVector<QString> &categories, const QMap<QString, bool> categoriesState);
+    
+private slots:
+    void stateChangedCategory(const QString &property, const bool state);
+    void stateChangedGroup(const QString &property, const bool state);
 };
 
 #endif // LOGWIDGET_H

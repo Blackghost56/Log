@@ -31,7 +31,9 @@ SOURCES += \
     test.cpp \
     logwidget.cpp \
     testqobject.cpp \
-    testthread.cpp
+    testthread.cpp \
+    logwidgetft.cpp
+
 
 HEADERS += \
         mainwindow.h \
@@ -39,11 +41,13 @@ HEADERS += \
     test.h \
     logwidget.h \
     testqobject.h \
-    testthread.h
+    testthread.h \
+    logwidgetft.h
 
 FORMS += \
         mainwindow.ui \
-    logwidget.ui
+    logwidget.ui \
+    logwidgetft.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
