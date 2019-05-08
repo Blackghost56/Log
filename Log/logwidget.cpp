@@ -13,7 +13,9 @@ LogWidget::LogWidget(QWidget *parent) :
     ui->TextEdit->setReadOnly(true);
 
     categoryTable = new LogWidgetFT(tr("Category"));
+    connect(categoryTable, &LogWidgetFT::stateChanged, this, &LogWidget::stateChangedCategory);
     groupTable = new LogWidgetFT(tr("Group"));
+    connect(groupTable, &LogWidgetFT::stateChanged, this, &LogWidget::stateChangedGroup);
 
     ui->Filter_Layout->addWidget(categoryTable);
     ui->Filter_Layout->addWidget(groupTable);
@@ -51,5 +53,15 @@ void LogWidget::addString(const QString &str)
 void LogWidget::categoriesHasChanged(const QVector<QString> &categories, const QMap<QString, bool> categoriesState)
 {
     //qDebug() << categories;
+
+}
+
+void LogWidget::stateChangedCategory(const QString &property, const bool state)
+{
+
+}
+
+void LogWidget::stateChangedGroup(const QString &property, const bool state)
+{
 
 }
