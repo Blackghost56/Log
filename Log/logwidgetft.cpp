@@ -14,12 +14,17 @@ LogWidgetFT::LogWidgetFT(const QString &title, QWidget *parent) :
     //ui->table->horizontalHeader()->setVisible(false);
     ui->table->setHorizontalHeaderLabels(QStringList() << tr("Filter") << tr("Enable"));
     //ui->table->setColumnWidth(1, 50);
-    connect(ui->showPrefix_checkBox, &QCheckBox::toggle, this, &LogWidgetFT::prefixStateChanged);
+    connect(ui->showPrefix_checkBox, &QCheckBox::toggled, this, &LogWidgetFT::prefixStateChanged);
 }
 
 LogWidgetFT::~LogWidgetFT()
 {
     delete ui;
+}
+
+void LogWidgetFT::setPrefixState(bool state)
+{
+    ui->showPrefix_checkBox->setChecked(state);
 }
 
 void LogWidgetFT::addRow(const QString &str, const bool state)
@@ -46,6 +51,13 @@ void LogWidgetFT::addRow(const QString &str, const bool state)
     ui->table->resizeColumnsToContents();
     //ui->table->resizeColumnToContents(0);
 
+
+}
+
+void LogWidgetFT::clear()
+{
+     ui->table->clear();
+     ui->table->setRowCount(0);
 }
 
 void LogWidgetFT::setTitle(const QString &title)

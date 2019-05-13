@@ -3,12 +3,19 @@
 
 LogCore::LogCore(QObject *parent) : QObject(parent)
 {
-   workerThread = new QThread;
-   //worker = new LogHandler(this);
-   worker = new LogHandler();
-   worker->moveToThread(workerThread);
-   connect(this, &LogCore::sendToWorker, worker, &LogHandler::doWork);
-   workerThread->start();
+
+    for (int i = 0; i < LogGroup::last; i++)
+    {
+        filterState.groupState.insert(LogGroupToString(i), newGroupStateDefault);
+    }
+
+
+    workerThread = new QThread;
+    //worker = new LogHandler(this);
+    worker = new LogHandler();
+    worker->moveToThread(workerThread);
+    connect(this, &LogCore::sendToWorker, worker, &LogHandler::doWork);
+    workerThread->start();
 }
 
 LogCore::~LogCore()
@@ -103,7 +110,7 @@ void LogCore::bindQObjectWithCategory(const QString &category, const QObject *pt
     mutexFilter.unlock();
 }
 
-QString LogCore::LogGroupToString(const LogCore::LogGroup &group)
+QString LogCore::LogGroupToString(const int &group)
 {
     QMutexLocker locker(&mutexLGTS);
     QString buf = LogGroupString.value(group);
@@ -133,6 +140,24 @@ void LogCore::setFilterState(const LogCore::Filter &state)
 {
     QMutexLocker locker(&mutexFilter);
     filterState = state;
+    // debug!!!!!!!!!!
+    /*QString buf;
+    qDebug() << "groupState:";
+    for (int i = 0; i < LogCore::LogGroup::last; i++)
+    {
+        buf = LogGroupToString(i);
+        qDebug() << buf << state.groupState.value(buf);
+    }
+    qDebug() << "categoriesState:";
+    for (auto i: categories)
+    {
+        qDebug() << i << state.categoriesState.value(i);
+    }
+    qDebug() << "timePrefixVisible: " << state.timePrefixVisible;
+    qDebug() << "groupPrefixVisible: " << state.groupPrefixVisible;
+    qDebug() << "contextPrefixVisible: " << state.contextPrefixVisible;
+    qDebug() << "categoriesPrefixVisible: " << state.categoriesPrefixVisible;*/
+
 }
 
 LogHandler::LogHandler()
@@ -199,7 +224,7 @@ void LogHandler::sendFilteredDataToUi(const LogCore::LogData &data)
     LogCore &logCoreRef = LogCore::getInstance();
     LogCore::Filter filter = logCoreRef.getFilterState();
 
-    if (filter.groupState.value(data.group) && filter.categoriesState.value(data.category))
+    if (filter.groupState.value(logCoreRef.LogGroupToString(data.group)) && filter.categoriesState.value(data.category))
     {
         if (filter.timePrefixVisible)
             buf.push_back(data.time.toString(time_format_2));

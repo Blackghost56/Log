@@ -15,12 +15,16 @@ class LogWidgetFT : public QWidget
 public:
     explicit LogWidgetFT(const QString &title, QWidget *parent = nullptr);
     ~LogWidgetFT();
+    void setPrefixState(bool state);
     void addRow(const QString &str, const bool state);
+    void clear();
     void setTitle(const QString &title);
     QString getTitle();
 
 private:
     Ui::LogWidgetFT *ui;
+
+public slots:
 
 private slots:
     void checkToggled(bool checked);
