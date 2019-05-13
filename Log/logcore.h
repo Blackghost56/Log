@@ -20,8 +20,8 @@ class LogCore : public QObject
 {
     Q_OBJECT
 public:
-    enum LogGroup : int {Debug, Info, Warning, Critical, Fatal};
-    QMap<int, QString> LogGroupString = {{Debug, "Debug"}, {Info, "Info"}, {Warning, "Warning"}, {Critical, "Critical"}, {Fatal, "Fatal"}};
+    enum LogGroup : int {Debug, Info, Warning, Critical, Fatal, last};
+
 
     struct LogData
     {
@@ -39,12 +39,15 @@ public:
         bool contextPrefixVisible    = false;
         QMap<QString, bool> categoriesState;
         bool categoriesPrefixVisible = true;
-        QMap<LogGroup, bool> groupState = {{Debug, true}, {Info, true}, {Warning, true}, {Critical, true}, {Fatal, true}};
+        //QMap<int, bool> groupState = {{Debug, true}, {Info, true}, {Warning, true}, {Critical, true}, {Fatal, true}};
+        QMap<QString, bool> groupState;
         bool groupPrefixVisible = false;
     };
 
 private:
+    QMap<int, QString> LogGroupString = {{Debug, tr("Debug")}, {Info, tr("Info")}, {Warning, tr("Warning")}, {Critical, tr("Critical")}, {Fatal, tr("Fatal")}};
     const bool  newCategoriesStateDefault = true;
+    const bool  newGroupStateDefault = true;
 
     QMutex mutexAdd;
     QMutex mutexLGTS;
@@ -67,7 +70,8 @@ public:
     static LogCore &getInstance();
     void addData(const LogData &data);
     void bindQObjectWithCategory(const QString &category, const QObject *ptr);
-    QString LogGroupToString(const LogGroup &group);
+    //QString LogGroupToString(const LogGroup &group);
+    QString LogGroupToString(const int &group);
     QVector<QString> getCategories();
     LogHandler *getLogHandlerPtr();
     Filter &getFilterState();

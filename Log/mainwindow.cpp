@@ -58,9 +58,41 @@ MainWindow::MainWindow(QWidget *parent) :
     LogInfo("double to QString")<< QString("%1").arg(double(-12222.2222222222222222111111), 0, 'g', 30);
     // -----------
 
+    timer_0 = new QTimer(this);
+    connect(timer_0, &QTimer::timeout, this, &MainWindow::timeout_timer_0);
+    timer_0->start(100);
+
+    timer_1 = new QTimer(this);
+    connect(timer_1, &QTimer::timeout, this, &MainWindow::timeout_timer_1);
+    timer_1->start(100);
+
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::timeout_timer_0()
+{
+    static int iteration = 0;
+    iteration++;
+
+    LogDebug("Timer_0") << iteration;
+    LogInfo("Timer_0") << iteration;
+    LogWarning("Timer_0") << iteration;
+    LogCritical("Timer_0") << iteration;
+    LogFatal("Timer_0") << iteration;
+}
+
+void MainWindow::timeout_timer_1()
+{
+    static int iteration = 0;
+    iteration++;
+
+    LogDebug("Timer_1") << iteration;
+    LogInfo("Timer_1") << iteration;
+    LogWarning("Timer_1") << iteration;
+    LogCritical("Timer_1") << iteration;
+    LogFatal("Timer_1") << iteration;
 }

@@ -7,6 +7,7 @@
 #include "testqobject.h"
 #include <QThread>
 #include "testthread.h"
+#include "QTimer"
 
 namespace Ui {
 class MainWindow;
@@ -25,6 +26,13 @@ private:
 
     TestThread *th1;
     TestThread *th2;
+
+    QTimer *timer_0;
+    QTimer *timer_1;
+
+private slots:
+    void timeout_timer_0();
+    void timeout_timer_1();
 
 };
 
