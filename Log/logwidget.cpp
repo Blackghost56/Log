@@ -134,12 +134,4 @@ void LogWidget::groupTable_stateChanged(const QString &property, const bool stat
     logCoreRef.setFilterState(filterState);
 }
 
-void LogWidget::stateChangedCategory(const QString &property, const bool state)
-{
 
-}
-
-void LogWidget::stateChangedGroup(const QString &property, const bool state)
-{
-
-}
